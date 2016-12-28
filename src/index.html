@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script type="text/javascript">
+            window.features = {
+                useServiceWorker: ('serviceWorker' in navigator)
+            };
+        </script>
+        <title>about:blank</title>
+        <style type="text/css">
+            .about-blank__container::before {
+                z-index: -1;
+                content: "";
+            }
+            .about-blank__container, 
+            .about-blank__container::before {
+                position: absolute;
+                left: 0;
+                right: 0;
+                top: 0;
+                bottom: 0;
+                transform: translateZ(0);
+            }
+            .about-blank__background::before {
+                background: rgba(60, 60, 60, 1);
+                background: linear-gradient(45deg, rgba(60, 60, 60, 1), rgba(200, 200, 200, 1));
+                transition: opacity 0.5s ease-in-out;
+                opacity: 1;
+            }
+            .about-blank__background--loaded::before {
+                opacity: 0;
+            }
+            .about-blank__background {
+                background-repeat: no-repeat;
+                background-size: cover;
+                background-position: center center;
+            }
+        </style>
+        <script type="text/javascript">
+            if (window.features.useServiceWorker) {
+                navigator.serviceWorker.register('service-worker.js', {
+                    scope: '/'
+                });
+            }
+        </script>
+        <script type="text/javascript" async deferred src="index.js"></script>
+    </head>
+    <body>
+        <div class="about-blank__container about-blank__background">
+            <h1>about:blank</h1>
+        </div>
+    </body>
+</html>
