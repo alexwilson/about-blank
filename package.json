@@ -1,0 +1,11 @@
+{
+  "name": "about-blank",
+  "author": "Alex Wilson <a@ax.gy>",
+  "license": "MIT",
+  "scripts": {
+    "deploy": "gh-pages -d dist"
+  },
+  "devDependencies": {
+    "gh-pages": "^0.12.0"
+  }
+}
