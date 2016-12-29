@@ -15,9 +15,33 @@ const _downloadImage = src => new Promise((resolve, reject) => {
 })
 
 // Retrieves a random image from unsplash.
-const _randomUnsplashImage = _ => fetch('https://source.unsplash.com/category/buildings').then(res => res.url)
+const _randomUnsplashImage = _ => fetch('https://source.unsplash.com/category/buildings/1920x1200').then(res => res.url)
+
+// Bound to an Element this adjusts innerText to reflect the current time.
+function displayTime() {
+    const currentTime = new Date()
+    this.innerText = currentTime.toLocaleTimeString('en-US')
+}
+
+// Toggles the visibility of the settings container.
+const hideShowSettingsContainer = e => {
+    e.preventDefault()
+    const settingsContainer = document.querySelector('.settings__container')
+    settingsContainer.setAttribute('aria-hidden', settingsContainer.getAttribute('aria-hidden') === "false" ? "true" : "false")
+}
 
 window.addEventListener('load', _ => {
+
+    const clockElement = document.querySelector('.ab-time__clock')
+    const incrementClock = displayTime.bind(clockElement)
+    const clock = setInterval(incrementClock, 1000)
+    incrementClock()
+
+    const settingsOpenButton = document.querySelector('.about-blank__settings-button')
+    const settingsCloseButton = document.querySelector('.settings__close-button')
+    settingsOpenButton.addEventListener('click', hideShowSettingsContainer)
+    settingsCloseButton.addEventListener('click', hideShowSettingsContainer)
+
     store = new AboutBlankStore()
     store.load()
         .then(_ => store.state.backgroundImage || _randomUnsplashImage())
@@ -29,6 +53,11 @@ window.addEventListener('load', _ => {
         .then(_downloadImage)
         .then(src => store.setState({ backgroundImage: src }))
         .catch(console.error)
+
+    const debugPad = document.querySelector('.settings__debug')
+    store.addEventListener('update', e => {
+        debugPad.innerText = JSON.stringify(store.state, null, 2)
+    })
 })
 
 // Simplistic store, allowing us to store minimal information offline via localStorage.
@@ -45,6 +74,9 @@ class AboutBlankStore {
     constructor(stateStorageKey = '__ABOUT:BLANK_PREVIOUS_STATE__') {
         this.stateStorageKey = stateStorageKey
         this.state = {}
+        this.listeners = {
+            update: []
+        }
     }
 
     // Hydrates the state based on localStorage.
@@ -76,9 +108,28 @@ class AboutBlankStore {
         localStorage.setItem(this.stateStorageKey, serializedState)
     }
 
+    // Dispatches events.
+    async _dispatchEvent(type, event = {}) {
+        this.listeners[type].forEach(f => f(event))
+    }
+
     // Mimics React API, allowing to replace the current state with a diff.
     setState(state) {
-        this.state = Object.assign(this.state, state)
+        const newState = Object.assign(this.state, state)
+        this._dispatchEvent('update', { state: this.state, newState })
+        this.state = newState
         this._saveState()
+    }
+
+    // Allows subscribing to a state change.
+    addEventListener(type, listener) {
+        if (this.listeners[type] instanceof Array
+            && listener instanceof Function) {
+            this.listeners[type].push(listener);
+        }
+    }
+
+    // Unsubscribe from state changes.
+    removeEventListener(type, listener) {
     }
 }

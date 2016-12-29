@@ -35,6 +35,61 @@
                 background-size: cover;
                 background-position: center center;
             }
+            .about-blank__settings-button {
+                position: absolute;
+                opacity: 0.4;
+                text-decoration: none;
+                bottom: 0.2rem;
+                right: 0.2rem;
+                line-height: 1;
+                font-size: 1.8rem;
+            }
+            .about-blank__settings-button:hover {
+                opacity: 1;
+            }
+
+            .settings__container {
+                z-index: 999;
+                background: rgba(0,0,0,0.4);
+                padding: 2.4rem;
+                position: absolute;
+                top: 0;
+                bottom: 0;
+                left: 0;
+                right: 0;
+            }
+            .settings__container[aria-hidden="true"] {
+                visibility: hidden;
+            }
+            .settings__inner {
+                height: 100%;
+                width: 100%;
+                background: #fff;
+            }
+            .settings__close-button {
+                position: absolute;
+                position: relative;
+                float: right;
+                line-height: 0.5;
+                font-size: 2rem;
+                text-decoration: none;
+            }
+            .settings__close-button:after {
+                content: " ";
+                clear: both;
+            }
+
+            .ab-time {
+                text-align: center;
+                color: #fff;
+                font-family: sans-serif;
+                font-weight: normal;
+                font-size: 10em;
+                text-shadow: 0 0 0.2em rgba(0,0,0,0.8);
+            }
+            .ab-time__clock {
+                font-weight: normal;
+            }
         </style>
         <script type="text/javascript">
             if (window.features.useServiceWorker) {
@@ -47,7 +102,16 @@
     </head>
     <body>
         <div class="about-blank__container about-blank__background">
-            <h1>about:blank</h1>
+            <div class="ab-time">
+                <h1 class="ab-time__clock"></h1>
+            </div>
+        </div>
+        <a class="about-blank__settings-button" href="#">⚙</a>
+        <div class="settings__container" aria-hidden="true">
+            <div class="settings__inner">
+                <a class="settings__close-button" href="#" title="Close Settings Window">×</a>
+                <textarea class="settings__debug" readonly="true"></textarea>
+            </div>
         </div>
     </body>
 </html>
