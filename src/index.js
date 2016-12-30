@@ -108,17 +108,17 @@ class AboutBlankStore {
         localStorage.setItem(this.stateStorageKey, serializedState)
     }
 
-    // Dispatches events.
-    async _dispatchEvent(type, event = {}) {
-        this.listeners[type].forEach(f => f(event))
-    }
-
     // Mimics React API, allowing to replace the current state with a diff.
     setState(state) {
         const newState = Object.assign(this.state, state)
         this._dispatchEvent('update', { state: this.state, newState })
         this.state = newState
         this._saveState()
+    }
+
+    // Dispatches events.
+    async _dispatchEvent(type, event = {}) {
+        this.listeners[type].forEach(f => f(event))
     }
 
     // Allows subscribing to a state change.
@@ -131,5 +131,11 @@ class AboutBlankStore {
 
     // Unsubscribe from state changes.
     removeEventListener(type, listener) {
+        for (let subscriber in this.listeners[type]) {
+            if (subscriber === listener) {
+                let index = this.listeners[type].indexOf(subscriber)
+                this.listeners[type].splice(index, 1)
+            }
+        }
     }
 }
