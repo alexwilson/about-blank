@@ -67,6 +67,7 @@ class AboutBlankStore {
     get initialState() {
         return {
             version: 1,
+            createdAt: Date.now()
         }
     }
 
