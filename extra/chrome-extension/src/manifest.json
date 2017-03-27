@@ -1,8 +1,8 @@
 {
   "manifest_version": 2,
-  "name": "ax.gy/about:blank",
+  "name": "about:blank",
   "version": "1.0",
-  "description": "Replaces new tab page with about:blank.",
+  "description": "Replaces Chrome's new tab page with https://ax.gy/about-blank",
   "chrome_url_overrides": {
     "newtab": "index.html"
   }

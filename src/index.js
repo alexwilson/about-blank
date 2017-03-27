@@ -8,14 +8,15 @@ const _loadBackgroundImage = src => {
 
 // Asynchronously downloads an image.
 const _downloadImage = src => new Promise((resolve, reject) => {
+    if (!src) return reject(new Error('No image specified'))
     const downloadingImage = new Image()
     downloadingImage.addEventListener('load', _ => resolve(src))
     downloadingImage.addEventListener('error', er => reject(er))
-    downloadingImage.src = src
+    downloadingImage.src = 'https://responsiveimages.io/v1/images/'+encodeURIComponent(src)
 })
 
 // Retrieves a random image from unsplash.
-const _randomUnsplashImage = _ => fetch('https://source.unsplash.com/category/buildings/1920x1200').then(res => res.url)
+const _randomImage = _ => fetch('https://random.responsiveimages.io/v1/image').then(res => res.url)
 
 // Bound to an Element this adjusts innerText to reflect the current time.
 function displayTime() {
@@ -44,12 +45,12 @@ window.addEventListener('load', _ => {
 
     store = new AboutBlankStore()
     store.load()
-        .then(_ => store.state.backgroundImage || _randomUnsplashImage())
+        .then(_ => store.state.backgroundImage || _randomImage())
         .then(_downloadImage)
         .then(_loadBackgroundImage)
         .then(src => store.setState({ backgroundImage: src }))
         .catch(console.error)
-        .then(_randomUnsplashImage)
+        .then(_randomImage)
         .then(_downloadImage)
         .then(src => store.setState({ backgroundImage: src }))
         .catch(console.error)
@@ -67,6 +68,7 @@ class AboutBlankStore {
     get initialState() {
         return {
             version: 1,
+            createdAt: Date.now()
         }
     }
 
@@ -108,17 +110,17 @@ class AboutBlankStore {
         localStorage.setItem(this.stateStorageKey, serializedState)
     }
 
-    // Dispatches events.
-    async _dispatchEvent(type, event = {}) {
-        this.listeners[type].forEach(f => f(event))
-    }
-
     // Mimics React API, allowing to replace the current state with a diff.
     setState(state) {
         const newState = Object.assign(this.state, state)
         this._dispatchEvent('update', { state: this.state, newState })
         this.state = newState
         this._saveState()
+    }
+
+    // Dispatches events.
+    async _dispatchEvent(type, event = {}) {
+        this.listeners[type].forEach(f => f(event))
     }
 
     // Allows subscribing to a state change.
@@ -131,5 +133,11 @@ class AboutBlankStore {
 
     // Unsubscribe from state changes.
     removeEventListener(type, listener) {
+        for (let subscriber in this.listeners[type]) {
+            if (subscriber === listener) {
+                let index = this.listeners[type].indexOf(subscriber)
+                this.listeners[type].splice(index, 1)
+            }
+        }
     }
 }
