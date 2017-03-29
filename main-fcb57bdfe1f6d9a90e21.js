@@ -1,3 +1,75 @@
+/******/ (function(modules) { // webpackBootstrap
+/******/ 	// The module cache
+/******/ 	var installedModules = {};
+
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+
+/******/ 		// Check if module is in cache
+/******/ 		if(installedModules[moduleId])
+/******/ 			return installedModules[moduleId].exports;
+
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = installedModules[moduleId] = {
+/******/ 			i: moduleId,
+/******/ 			l: false,
+/******/ 			exports: {}
+/******/ 		};
+
+/******/ 		// Execute the module function
+/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+
+/******/ 		// Flag the module as loaded
+/******/ 		module.l = true;
+
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+
+
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = modules;
+
+/******/ 	// expose the module cache
+/******/ 	__webpack_require__.c = installedModules;
+
+/******/ 	// identity function for calling harmony imports with the correct context
+/******/ 	__webpack_require__.i = function(value) { return value; };
+
+/******/ 	// define getter function for harmony exports
+/******/ 	__webpack_require__.d = function(exports, name, getter) {
+/******/ 		if(!__webpack_require__.o(exports, name)) {
+/******/ 			Object.defineProperty(exports, name, {
+/******/ 				configurable: false,
+/******/ 				enumerable: true,
+/******/ 				get: getter
+/******/ 			});
+/******/ 		}
+/******/ 	};
+
+/******/ 	// getDefaultExport function for compatibility with non-harmony modules
+/******/ 	__webpack_require__.n = function(module) {
+/******/ 		var getter = module && module.__esModule ?
+/******/ 			function getDefault() { return module['default']; } :
+/******/ 			function getModuleExports() { return module; };
+/******/ 		__webpack_require__.d(getter, 'a', getter);
+/******/ 		return getter;
+/******/ 	};
+
+/******/ 	// Object.prototype.hasOwnProperty.call
+/******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
+
+/******/ 	// __webpack_public_path__
+/******/ 	__webpack_require__.p = "";
+
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(__webpack_require__.s = 0);
+/******/ })
+/************************************************************************/
+/******/ ([
+/* 0 */
+/***/ (function(module, exports) {
+
 // Sets a background image.
 const _loadBackgroundImage = src => {
     const aboutBlankContainer = document.querySelector('.about-blank__background')
@@ -8,15 +80,14 @@ const _loadBackgroundImage = src => {
 
 // Asynchronously downloads an image.
 const _downloadImage = src => new Promise((resolve, reject) => {
-    if (!src) return reject(new Error('No image specified'))
     const downloadingImage = new Image()
     downloadingImage.addEventListener('load', _ => resolve(src))
     downloadingImage.addEventListener('error', er => reject(er))
-    downloadingImage.src = 'https://responsiveimages.io/v1/images/'+encodeURIComponent(src)
+    downloadingImage.src = src
 })
 
 // Retrieves a random image from unsplash.
-const _randomImage = _ => fetch('https://random.responsiveimages.io/v1/image').then(res => res.url)
+const _randomUnsplashImage = _ => fetch('https://source.unsplash.com/category/buildings/1920x1200').then(res => res.url)
 
 // Bound to an Element this adjusts innerText to reflect the current time.
 function displayTime() {
@@ -45,12 +116,12 @@ window.addEventListener('load', _ => {
 
     store = new AboutBlankStore()
     store.load()
-        .then(_ => store.state.backgroundImage || _randomImage())
+        .then(_ => store.state.backgroundImage || _randomUnsplashImage())
         .then(_downloadImage)
         .then(_loadBackgroundImage)
         .then(src => store.setState({ backgroundImage: src }))
         .catch(console.error)
-        .then(_randomImage)
+        .then(_randomUnsplashImage)
         .then(_downloadImage)
         .then(src => store.setState({ backgroundImage: src }))
         .catch(console.error)
@@ -141,3 +212,6 @@ class AboutBlankStore {
         }
     }
 }
+
+/***/ })
+/******/ ]);

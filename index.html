@@ -7,7 +7,8 @@
         <meta name="theme-color" content="#cccccc">
         <script type="text/javascript">
             window.features = {
-                useServiceWorker: ('serviceWorker' in navigator)
+                useServiceWorker: ('serviceWorker' in navigator),
+                showClock: true
             };
         </script>
         <title>about:blank</title>
@@ -81,6 +82,11 @@
             .settings__close-button:after {
                 content: " ";
                 clear: both;
+            }
+            .settings__debug {
+                min-width: 20%;
+                width: auto;
+                height: 600px;
             }
 
             .ab-time {
