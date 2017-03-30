@@ -16,7 +16,10 @@ const _downloadImage = src => new Promise((resolve, reject) => {
 })
 
 // Retrieves a random image from unsplash.
-const _randomImage = _ => fetch('https://random.responsiveimages.io/v1/image').then(res => res.url)
+const _randomImage = _ => fetch('https://random.responsiveimages.io/v1/image?format=json')
+  .then(res => res.json())
+  .then(json => json.url)
+  .catch(console.error)
 
 // Bound to an Element this adjusts innerText to reflect the current time.
 function displayTime() {
